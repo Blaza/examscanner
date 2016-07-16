@@ -63,8 +63,6 @@ def fix_orientation(image):
 
     # detect edges in the grayscale image
     lines = cv2.Canny(gray, 50, 200)
-    cv2.imshow('img',lines)
-    cv2.waitKey(0)
 
     # get an image consisting of only long horizontal lines which are input
     # fields we use to check for orientation
