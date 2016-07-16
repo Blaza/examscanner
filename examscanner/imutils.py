@@ -2,6 +2,10 @@
 import numpy as np
 import cv2
 
+
+def to_grayscale(image):
+    return(cv2.cvtColor(image, cv2.COLOR_BGR2GRAY))
+
 def translate(image, x, y):
     # Define the translation matrix and perform the translation
     M = np.float32([[1, 0, x], [0, 1, y]])
@@ -27,6 +31,7 @@ def rotate(image, angle, center = None, scale = 1.0):
     return rotated
 
 def change_aspect(image):
+    # return image with aspect ratio changed
     return(cv2.flip(cv2.transpose(image), 1))
 
 def resize(image, width = None, height = None, inter = cv2.INTER_AREA):
@@ -59,3 +64,14 @@ def resize(image, width = None, height = None, inter = cv2.INTER_AREA):
 
     # return the resized image
     return resized
+
+def get_bottom_half(image):
+    # get dimensions of the image
+    (iH, iW) = image.shape[:2]
+
+    # get half of the height
+    halfY = int(iH/2)
+
+    # return only the bottom half of the image
+    # (for reference google cropping in opencv)
+    return(image[halfY:iH, 0:iW])
