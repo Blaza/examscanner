@@ -15,7 +15,7 @@ def FLT_clahe(gray):
     return(clahe.apply(gray))
 
 
-def match_templates(image, templates, mscale=0.7, Mscale=1.3, n=25):
+def match_templates(image, templates, mscale=0.975, Mscale=1.2, n=10):
     """
     We use multiple scale template matching (as found here: http://www.pyimagesearch.com/2015/01/26/multi-scale-template-matching-using-python-opencv/)
     We resize the given image n times in scales from mscale to Mscale and
