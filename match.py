@@ -47,10 +47,10 @@ for imagePath in image_paths:
 
     # unpack the bookkeeping variable and compute the (x, y) coordinates
     # of the bounding box based on the resized ratio
-    (m, maxLoc0, r) = locations[0]
-    (m1, maxLoc1, r1) = locations[1]
-    print('I: scale',"{0:.3f}".format(1/r),'max:',"{0:.3f}".format(m))
-    print('P: scale',"{0:.3f}".format(1/r1),'max:',"{0:.3f}".format(m1))
+    (m, maxLoc0, r, flt) = locations[0]
+    (m1, maxLoc1, r1, flt1) = locations[1]
+    print('I: scale',"{0:.3f}".format(1/r),'max:',"{0:.3f}".format(m), flt)
+    print('P: scale',"{0:.3f}".format(1/r1),'max:',"{0:.3f}".format(m1), flt1)
     print('-----------------------')
 
 
