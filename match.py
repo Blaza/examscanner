@@ -42,7 +42,7 @@ for imagePath in image_paths:
     # crop the image to only bottom half where all the writing is
     image = imutils.get_bottom_half(image)
 
-    locations = locator.match_templates(image, templates,0.8,1.1,13)
+    locations = locator.match_templates(image, templates)
 
 
     # unpack the bookkeeping variable and compute the (x, y) coordinates
