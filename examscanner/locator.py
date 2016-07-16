@@ -1,10 +1,17 @@
+"""
+The Locator module is used to find the fields in the notebook where the student
+id number and points scored on the exam will are written. We use multi-scale
+template matching to find those fields with the :func:`match_templates` function
+
+Functions with names beginning with FLT\_ are filters. They all take
+grayscale images and apply some filter to it and return the result.
+"""
+
 from examscanner import imutils
 import numpy as np
 import cv2
 
 
-# Functions with names beginning with FLT_ are filters. They all take
-# grayscale images and apply some filter to it and return the result.
 def FLT_identity(gray):
     """ Identity filter, returns the same image. """
     return(gray)
@@ -14,16 +21,18 @@ def FLT_clahe(gray):
     clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
     return(clahe.apply(gray))
 
-
 def match_templates(image, templates, mscale=0.975, Mscale=1.2, n=10):
     """
     We use multiple scale template matching (as found here: http://www.pyimagesearch.com/2015/01/26/multi-scale-template-matching-using-python-opencv/)
-    We resize the given image n times in scales from mscale to Mscale and
-    see where we get the best match for our template.
+
+    We try resizing the image in ``n`` different scales from ``mscale`` to
+    ``Mscale`` and see where we get the best match for our template.
+
     We will find all templates given to our function in the provided image
     and return the maximum value of corelation coefficient, the location of
     the point of maximum and the ratio of the resizing, so we can map the
     location to the original image.
+
     In addition to the several scales, we will try several filters on the
     image to try and get an even better estimate of the location. A quick
     google search can find a reference to the specified filters. For example
@@ -52,7 +61,7 @@ def match_templates(image, templates, mscale=0.975, Mscale=1.2, n=10):
         gray = f(gray)
 
         # loop over the scales of the image
-        for scale in np.linspace(mscale, Mscale, n)[::-1]:
+        for scale in np.linspace(mscale, Mscale, n):
             # resize the image according to the scale, and keep track
             # of the ratio of the resizing
             resized = imutils.resize(gray, width = int(gray.shape[1] * scale))
@@ -75,12 +84,12 @@ def match_templates(image, templates, mscale=0.975, Mscale=1.2, n=10):
                 # if we have found a new maximum correlation value, then ipdate
                 # the bookkeeping variable
                 if tpl['loc_info'] is None or maxVal > tpl['loc_info'][0]:
-                    tpl['loc_info'] = (maxVal, maxLoc, r)
-
-        # stop here if the coefficient is larger than 0.5 which is a good enough
-        # match, in order to improve speed
-        #if found[0] > 0.5:
-            #break
+                    tpl['loc_info'] = (maxVal, maxLoc, r, f.__name__)
+        # stop here if the coefficient is larger than 0.5 for all templates
+        # which is a good enough match, in order to improve speed
+        # [IMPROVE] it is a bit ugly solution, should be cleaned up some time
+        if all( [ tpl['loc_info'][0] > 0.5 for tpl in tpl_info] ):
+            break
 
     # unpack location information for all templates and return it
     locations = [ tpl['loc_info'] for tpl in tpl_info]
