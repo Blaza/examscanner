@@ -82,3 +82,13 @@ def fix_orientation(image):
         result = image
 
     return(result)
+
+
+def prepare_image(image):
+    """
+    This is just a macro for preparing an image for scanning. We apply :func:`fix_orientation` and
+    :func:`fit_to_scale` and return the result
+    """
+    img = fix_orientation(image)
+    img = fit_to_scale(img)
+    return(img)
