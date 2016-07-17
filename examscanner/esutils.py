@@ -45,8 +45,9 @@ def fix_orientation(image):
     We use morphological transformations (erosion + dilation) to get
     the horizontal lines image. We use a wide and short kernel to search
     for long lines. For reference, see:
-    http://stackoverflow.com/questions/19094642/
-    http://docs.opencv.org/3.0-beta/doc/py_tutorials/py_imgproc/py_morphological_ops/py_morphological_ops.html#opening
+
+    1. http://stackoverflow.com/questions/19094642/
+    2. http://docs.opencv.org/3.0-beta/doc/py_tutorials/py_imgproc/py_morphological_ops/py_morphological_ops.html#opening
     """
 
     (iH, iW) = image.shape[:2]
