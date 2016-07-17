@@ -1,15 +1,42 @@
 """
 The Locator module is used to find the fields in the notebook where the student
 id number and points scored on the exam will are written. We use multi-scale
-template matching to find those fields with the :func:`match_templates` function
+template matching to find those fields with the :func:`match_template` function
+
+Once we find where to look for our inputs, we get images which only contain
+input numbers with the :func:`get_inputs` function.
+
+Every function and method used will be described in a bit more detail in the
+corresponding documentation.
 
 Functions with names beginning with FLT\_ are filters. They all take
 grayscale images and apply some filter to it and return the result.
 """
 
 from examscanner import imutils
+from examscanner.consts import _REF_INPUT_HEIGHT
 import numpy as np
 import cv2
+
+class InputField():
+    """
+    This class represents one input from the notebook (e.g. index, points,...).
+
+    It has three attributes:
+
+    * template - the template image we use to locate the input in the image
+    * input_count - the number of input fields the input needs (e.g. index input takes two)
+    * offsets - the list of left and right offsets from the right edge of the template bounding \
+            box, found empirically for the reference image.
+
+    In the diagram below, offsets are distances from the right edge od the bounding box
+
+    .. image:: _static/offsets.png
+    """
+    def __init__(self, template, offsets, input_count=None):
+        self.template = template
+        self.offsets = offsets
+        self.input_count = input_count if input_count is not None else len(offsets)
 
 
 def FLT_identity(gray):
