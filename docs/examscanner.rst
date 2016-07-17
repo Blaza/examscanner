@@ -1,6 +1,12 @@
 examscanner package
 ===================
 
+.. automodule:: examscanner
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
 Submodules
 ----------
 
@@ -10,10 +16,3 @@ Submodules
    examscanner.imutils
    examscanner.locator
 
-Module contents
----------------
-
-.. automodule:: examscanner
-    :members:
-    :undoc-members:
-    :show-inheritance:
