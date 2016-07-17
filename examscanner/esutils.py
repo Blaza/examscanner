@@ -1,9 +1,8 @@
 from examscanner import imutils
+from examscanner.consts import _REF_IMAGE_HEIGHT
 import numpy as np
 import cv2
 
-
-_REF_IMAGE_HEIGHT = 1280
 
 def fit_to_scale(image):
     """
@@ -24,7 +23,6 @@ def fit_to_scale(image):
     result = imutils.resize(image, height=_REF_IMAGE_HEIGHT)
 
     return(result)
-
 
 
 def fix_orientation(image):
