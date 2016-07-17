@@ -7,6 +7,7 @@ import argparse
 import cv2
 import glob
 from examscanner import imutils, esutils, locator
+from examscanner.locator import InputField
 
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
@@ -26,6 +27,10 @@ args = vars(ap.parse_args())
 
 templates = [cv2.imread('templates/tpl_index.png'),
              cv2.imread('templates/tpl_points.png')]
+
+input_index = InputField(templates[0], [(2, 95), (105, 195)])
+input_points = InputField(templates[1], [(2, 310)])
+
 if args['images'] is not None:
     image_paths = glob.glob(args["images"] + "/*")
 else:
@@ -36,23 +41,27 @@ for imagePath in image_paths:
     # load the image, convert it to grayscale, and initialize the
     # bookkeeping variable to keep track of the matched region
     image = cv2.imread(imagePath)
-    image = esutils.fix_orientation(image)
-    image = esutils.fit_to_scale(image)
+    image = esutils.prepare_image(image)
 
     # crop the image to only bottom half where all the writing is
     image = imutils.get_bottom_half(image)
 
-    locations = locator.match_templates(image, templates)
+    loc_info = locator.match_template(image, input_index.template)
 
 
     # unpack the bookkeeping variable and compute the (x, y) coordinates
     # of the bounding box based on the resized ratio
-    (m, maxLoc0, r, flt) = locations[0]
-    (m1, maxLoc1, r1, flt1) = locations[1]
+    (m, maxLoc, r, flt) = loc_info
     print('I: scale',"{0:.3f}".format(1/r),'max:',"{0:.3f}".format(m), flt)
-    print('P: scale',"{0:.3f}".format(1/r1),'max:',"{0:.3f}".format(m1), flt1)
     print('-----------------------')
 
+
+    inputs = locator.get_inputs(image, input_index, loc_info)
+
+    cv2.imshow('first', inputs[0])
+    cv2.imshow('second', inputs[1])
+    cv2.waitKey(0)
+    exit(0)
 
 if len(image_paths) == 1:
     # reset the image changed by clahe
