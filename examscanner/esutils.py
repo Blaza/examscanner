@@ -1,3 +1,7 @@
+"""
+This module contains function used for preparation of the source image for scanning.
+"""
+
 from examscanner import imutils
 from examscanner.consts import _REF_IMAGE_HEIGHT
 import numpy as np
