@@ -6,7 +6,7 @@ import numpy as np
 import argparse
 import cv2
 import glob
-from examscanner import imutils, esutils, locator
+from examscanner import imutils, esutils, locator, reader
 from examscanner.locator import InputField
 
 # construct the argument parser and parse the arguments
@@ -41,6 +41,7 @@ for imagePath in image_paths:
     # load the image, convert it to grayscale, and initialize the
     # bookkeeping variable to keep track of the matched region
     image = cv2.imread(imagePath)
+    #image = cv2.bilateralFilter(image, 11, 17, 17)
     image = esutils.prepare_image(image)
 
     # crop the image to only bottom half where all the writing is
@@ -61,68 +62,10 @@ for imagePath in image_paths:
     cv2.imshow('first', inputs[0])
     cv2.imshow('second', inputs[1])
     cv2.waitKey(0)
-    exit(0)
 
-if len(image_paths) == 1:
-    # reset the image changed by clahe
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    (tH, tW) = templates[0].shape[:2]
-    (startX, startY) = (int(maxLoc0[0] * r), int(maxLoc0[1] * r))
-    (endX, endY) = (int((maxLoc0[0] + tW) * r), int((maxLoc0[1] + tH) * r))
+    in0 = reader.extract_text(inputs[0])
+    in1 = reader.extract_text(inputs[1])
 
-    # draw a bounding box around the detected result and display the image
-    cv2.rectangle(image, (startX, startY), (endX, endY), (0, 0, 255), 2)
-
-    # draw two bounding boxes for the 'broj dosijea' fields. We have some defaults
-    # for the reference image and scale the boxes using the ratio r. This is
-    # hardcoded and maybe could be improved in the future. For r=1 we get the
-    # values we got empirically for defaults.
-    cv2.rectangle(image, (endX + int(2*r), startY - int(15*r)),
-                         (endX + int(95*r), endY + int(5*r)),
-                         (0, 255, 0), 1)
-    cv2.rectangle(image, (endX + int(105*r), startY - int(15*r)),
-                         (endX + int(195*r), endY + int(5*r)),
-                         (255, 0, 0), 1)
-
-    (tH, tW) = templates[1].shape[:2]
-    (startX, startY) = (int(maxLoc1[0] * r1), int(maxLoc1[1] * r1))
-    (endX, endY) = (int((maxLoc1[0] + tW) * r1), int((maxLoc1[1] + tH) * r1))
-
-    # draw a bounding box around the detected result and display the image
-    cv2.rectangle(image, (startX, startY), (endX, endY), (0, 0, 255), 2)
-    cv2.rectangle(image, (endX + int(2*r1), startY - int(15*r1)),
-                         (endX + int(310*r1), endY + int(5*r1)),
-                         (0, 255, 0), 1)
-    cv2.imshow("Image", image)
-    cv2.waitKey(0)
-    exit(0)
-    # detect edges in the resized, grayscale image
-    edged = cv2.Canny(gray, 50, 200)
-
-    # Use morphological transforms (erode + dilate) to remove long
-    # horizontal lines from the image so we have clearer digits
-    linek=np.zeros((3,20),dtype=np.uint8)
-    linek[1,...]=1
-    x=cv2.morphologyEx(edged, cv2.MORPH_OPEN, linek ,iterations=1)
-    edged -= x
-
-    cv2.rectangle(edged, (startX, startY), (endX, endY), 175, 2)
-
-    if args['tpl_name']=="tpl_index.png":
-        # draw two bounding boxes for the 'broj dosijea' fields. We have some defaults
-        # for the reference image and scale the boxes using the ratio r. This is
-        # hardcoded and maybe could be imporeved in the future. For r=1 we get the
-        # values we got empirically for defaults.
-        cv2.rectangle(edged, (endX + int(2*r), startY - int(15*r)),
-                             (endX + int(95*r), endY + int(5*r)),
-                             255, 1)
-        cv2.rectangle(edged, (endX + int(105*r), startY - int(15*r)),
-                             (endX + int(195*r), endY + int(5*r)),
-                             255, 1)
-    else:
-        cv2.rectangle(edged, (endX + int(2*r), startY - int(15*r)),
-                             (endX + int(310*r), endY + int(5*r)),
-                             255, 1)
-
-    cv2.imshow("edged", edged)
+    cv2.imshow('first', in0)
+    cv2.imshow('second', in1)
     cv2.waitKey(0)
