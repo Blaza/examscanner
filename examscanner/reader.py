@@ -1,5 +1,5 @@
 """
-This module is used for reading of the numbers from input images.
+This module is used for reading of the number strings from input images.
 
 We start by removing the long horizontal line that indicates input on the notebook and returning
 a binary image that contains only an outline of the number. That is done by :func:`extract_text`
@@ -25,4 +25,11 @@ def extract_text(image):
     # remove the horizontal lines
     edged -= x
 
+    # closing contours kernel, a square matrix of all ones
+    closek = np.ones((3,3),dtype=np.uint8)
+    # fill in the edges
+    edged = cv2.morphologyEx(edged, cv2.MORPH_CLOSE, closek, iterations=1)
+
+    # remove noise
+    edged = cv2.fastNlMeansDenoising(edged,None,50,7,21)
     return(edged)
