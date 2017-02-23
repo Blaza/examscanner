@@ -52,12 +52,15 @@ def resize(image, width = None, height = None, inter = cv2.INTER_AREA):
         r = height / float(h)
         dim = (int(w * r), height)
 
-    # otherwise, the height is None
-    else:
+    # or the height is None
+    elif height is None:
         # calculate the ratio of the width and construct the
         # dimensions
         r = width / float(w)
         dim = (width, int(h * r))
+    # otherwise, nothing is None
+    else:
+        dim = (width, height)
 
     # resize the image
     resized = cv2.resize(image, dim, interpolation = inter)
